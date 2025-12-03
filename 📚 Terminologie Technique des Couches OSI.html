@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminologie OSI - Guide Technique Complet</title>
+    <style>
+        :root {
+            --layer7: #ef4444;
+            --layer6: #7c3aed;
+            --layer5: #6d28d9;
+            --layer4: #3b82f6;
+            --layer3: #10b981;
+            --layer2: #f59e0b;
+            --layer1: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --term-bg: rgba(30, 41, 59, 0.9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px;
+            margin-bottom: 40px;
+            background: var(--term-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--layer7), var(--layer1));
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, 
+                var(--layer7) 0%, 
+                var(--layer6) 16.66%, 
+                var(--layer5) 33.33%, 
+                var(--layer4) 50%, 
+                var(--layer3) 66.66%, 
+                var(--layer2) 83.33%, 
+                var(--layer1) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #cbd5e0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .osi-pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 50px 0;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .layer-3d {
+            width: 90%;
+            padding: 25px;
+            margin: 3px 0;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .layer-3d:hover {
+            transform: translateX(20px) rotateY(10deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .layer-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+            z-index: 1;
+        }
+
+        .layer-content {
+            position: relative;
+            z-index: 2;
+            flex-grow: 1;
+        }
+
+        .layer-number {
+            font-size: 2rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 50%;
+            min-width: 60px;
+            text-align: center;
+            margin-right: 20px;
+        }
+
+        .layer-7 { background: var(--layer7); transform: translateZ(60px); }
+        .layer-6 { background: var(--layer6); transform: translateZ(50px); }
+        .layer-5 { background: var(--layer5); transform: translateZ(40px); }
+        .layer-4 { background: var(--layer4); transform: translateZ(30px); }
+        .layer-3 { background: var(--layer3); transform: translateZ(20px); }
+        .layer-2 { background: var(--layer2); transform: translateZ(10px); }
+        .layer-1 { background: var(--layer1); transform: translateZ(0px); }
+
+        /* GRID DE TERMINOLOGIE */
+        .terminology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .term-card {
+            background: var(--term-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .term-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .term-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: inherit;
+            border-color: inherit;
+        }
+
+        .term-card.layer-7-term { border-color: var(--layer7); }
+        .term-card.layer-6-term { border-color: var(--layer6); }
+        .term-card.layer-5-term { border-color: var(--layer5); }
+        .term-card.layer-4-term { border-color: var(--layer4); }
+        .term-card.layer-3-term { border-color: var(--layer3); }
+        .term-card.layer-2-term { border-color: var(--layer2); }
+        .term-card.layer-1-term { border-color: var(--layer1); }
+
+        .term-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .term-icon {
+            font-size: 2.5rem;
+        }
+
+        .term-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .term-pdu {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            border-left: 4px solid;
+        }
+
+        .term-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .term-item {
+            padding: 10px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            border-left: 3px solid;
+            transition: all 0.3s;
+        }
+
+        .term-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .code-block {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            overflow-x: auto;
+            border: 1px solid #374151;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: '💻 Wireshark';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--layer4);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+
+        /* DIAGRAMME ENCAPSULATION */
+        .encapsulation-diagram {
+            background: var(--term-bg);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 50px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .packet-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px auto;
+            max-width: 600px;
+        }
+
+        .packet-layer {
+            width: 100%;
+            padding: 20px;
+            margin: 3px 0;
+            color: white;
+            font-weight: bold;
+            text-align: left;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 8px solid;
+        }
+
+        .packet-layer:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .layer-pointer {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            opacity: 0.7;
+        }
+
+        /* GLOSSAIRE INTERACTIF */
+        .glossary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .glossary-term {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            transition: all 0.3s;
+            cursor: help;
+        }
+
+        .glossary-term:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .glossary-term abbr {
+            text-decoration: none;
+            font-weight: bold;
+            color: var(--accent);
+            border-bottom: 1px dotted var(--accent);
+        }
+
+        /* ANIMATIONS */
+        @keyframes highlight {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+            50% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0.3); }
+        }
+
+        .highlight {
+            animation: highlight 2s ease;
+        }
+
+        /* COMPARAISON VISUELLE */
+        .comparison {
+            display: flex;
+            gap: 30px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .comparison-box {
+            flex: 1;
+            min-width: 300px;
+            background: var(--term-bg);
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .protocol-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .protocol-item {
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        /* BOUTONS */
+        .btn {
+            background: var(--layer4);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: #9ca3af;
+            border-top: 1px solid #374151;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .layer-3d {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .layer-number {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .terminology-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Terminologie Technique des Couches OSI</h1>
+            <p class="subtitle">PDU, Sockets, Trames, Paquets, Segments - Guide Complet des Termes Réseau</p>
+            <div class="controls">
+                <button class="btn" onclick="showAllTerms()">
+                    <span>🔍</span> Voir Tous les Termes
+                </button>
+                <button class="btn" onclick="startEncapsulationDemo()">
+                    <span>🔄</span> Démo Encapsulation
+                </button>
+                <button class="btn" onclick="showGlossary()">
+                    <span>📖</span> Glossaire Complet
+                </button>
+            </div>
+        </header>
+
+        <!-- PYRAMIDE OSI 3D -->
+        <div class="osi-pyramid">
+            <div class="layer-3d layer-7" onclick="showLayerDetails(7)">
+                <div class="layer-number">7</div>
+                <div class="layer-content">
+                    <h3>Application</h3>
+                    <p>PDU: Données | Socket | API | Service</p>
+                </div>
+                <div class="layer-pointer">→</div>
+            </div>
+            
+            <div class="layer-3d layer-6" onclick="showLayerDetails(6)">
+                <div class="layer-number">6</div>
+                <div class="layer-content">
+                    <h3>Présentation</h3>
+                    <p>PDU: Données | Encodage | Chiffrement | Compression</p>
+                </div>
+                <div class="layer-pointer">→</div>
+            </div>
+            
+            <div class="layer-3d layer-5" onclick="showLayerDetails(5)">
+                <div class="layer-number">5</div>
+                <div class="layer-content">
+                    <h3>Session</h3>
+                    <p>PDU: Données | Session | RPC | Dialogue</p>
+                </div>
+                <div class="layer-pointer">→</div>
+            </div>
+            
+            <div class="layer-3d layer-4" onclick="showLayerDetails(4)">
+                <div class="layer-number">4</div>
+                <div class="layer-content">
+                    <h3>Transport</h3>
+                    <p>PDU: Segment/Datagramme | Socket | Port | TCP/UDP</p>
+                </div>
+                <div class="layer-pointer">→</div>
+            </div>
+            
+            <div class="layer-3d layer-3" onclick="showLayerDetails(3)">
+                <div class="layer-number">3</div>
+                <div class="layer-content">
+                    <h3>Réseau</h3>
+                    <p>PDU: Paquet | Routeur | IP | Routage</p>
+                </div>
+                <div class="layer-pointer">→</div>
+            </div>
+            
+            <div class="layer-3d layer-2" onclick="showLayerDetails(2)">
+                <div class="layer-number">2</div>
+                <div class="layer-content">
+                    <h3>Liaison</h3>
+                    <p>PDU: Trame | Switch | MAC | Ethernet</p>
+                </div>
+                <div class="layer-pointer">→</div>
+            </div>
+            
+            <div class="layer-3d layer-1" onclick="showLayerDetails(1)">
+                <div class="layer-number">1</div>
+                <div class="layer-content">
+                    <h3>Physique</h3>
+                    <p>PDU: Bit | Hub | Câble | Signal</p>
+                </div>
+                <div class="layer-pointer">→</div>
+            </div>
+        </div>
+
+        <!-- DIAGRAMME D'ENCAPSULATION -->
+        <section class="encapsulation-diagram">
+            <h2>🔄 Processus d'Encapsulation/Décapsulation</h2>
+            <div class="packet-stack" id="packetStack">
+                <div class="packet-layer layer-7" onclick="showTermDetails('donnees')">
+                    <strong>Couche 7-6-5 : DONNÉES</strong><br>
+                    <small>HTTP Request + En-têtes application</small>
+                    <div class="layer-pointer">📄</div>
+                </div>
+                
+                <div class="packet-layer layer-4" onclick="showTermDetails('segment')">
+                    <strong>Couche 4 : SEGMENT TCP</strong><br>
+                    <small>En-tête TCP + Ports + Données</small>
+                    <div class="layer-pointer">📦</div>
+                </div>
+                
+                <div class="packet-layer layer-3" onclick="showTermDetails('paquet')">
+                    <strong>Couche 3 : PAQUET IP</strong><br>
+                    <small>En-tête IP + Adresses + Segment</small>
+                    <div class="layer-pointer">📫</div>
+                </div>
+                
+                <div class="packet-layer layer-2" onclick="showTermDetails('trame')">
+                    <strong>Couche 2 : TRAME Ethernet</strong><br>
+                    <small>En-tête Ethernet + MAC + Paquet + Trailer</small>
+                    <div class="layer-pointer">🔗</div>
+                </div>
+                
+                <div class="packet-layer layer-1" onclick="showTermDetails('bit')">
+                    <strong>Couche 1 : BITS</strong><br>
+                    <small>Signaux électriques/optiques sur le média</small>
+                    <div class="layer-pointer">⚡</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn" onclick="animateEncapsulation()">
+                    <span>▶️</span> Voir l'Encapsulation
+                </button>
+                <button class="btn" onclick="animateDecapsulation()">
+                    <span>⏪</span> Voir la Décapsulation
+                </button>
+            </div>
+        </section>
+
+        <!-- TERMINOLOGIE PAR COUCHE -->
+        <div id="terminologyContent">
+            <!-- Rempli dynamiquement -->
+        </div>
+
+        <!-- COMPARAISON TCP/IP vs OSI -->
+        <section>
+            <h2>⚖️ Comparaison : OSI vs TCP/IP - Terminologie</h2>
+            <div class="comparison">
+                <div class="comparison-box">
+                    <h3>🏗️ Modèle OSI (7 couches)</h3>
+                    <div class="protocol-stack">
+                        <div class="protocol-item" style="border-color: var(--layer7);">
+                            <strong>7. Application</strong><br>
+                            <small>PDU: Données | API | Socket</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: var(--layer6);">
+                            <strong>6. Présentation</strong><br>
+                            <small>Encodage | Chiffrement | Compression</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: var(--layer5);">
+                            <strong>5. Session</strong><br>
+                            <small>Dialogue | Synchronisation | RPC</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: var(--layer4);">
+                            <strong>4. Transport</strong><br>
+                            <small>PDU: Segment | Port | Socket</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: var(--layer3);">
+                            <strong>3. Réseau</strong><br>
+                            <small>PDU: Paquet | IP | Routeur</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: var(--layer2);">
+                            <strong>2. Liaison</strong><br>
+                            <small>PDU: Trame | MAC | Switch</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: var(--layer1);">
+                            <strong>1. Physique</strong><br>
+                            <small>PDU: Bit | Câble | Signal</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comparison-box">
+                    <h3>🌐 Modèle TCP/IP (4 couches)</h3>
+                    <div class="protocol-stack">
+                        <div class="protocol-item" style="border-color: #3b82f6;">
+                            <strong>Application</strong><br>
+                            <small>HTTP, FTP, SMTP, DNS</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: #10b981;">
+                            <strong>Transport</strong><br>
+                            <small>TCP (Segment) | UDP (Datagramme)</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: #f59e0b;">
+                            <strong>Internet</strong><br>
+                            <small>IP (Paquet) | ICMP | ARP</small>
+                        </div>
+                        <div class="protocol-item" style="border-color: #8b5cf6;">
+                            <strong>Accès Réseau</strong><br>
+                            <small>Ethernet (Trame) | Wi-Fi | PPP</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GLOSSAIRE TECHNIQUE -->
+        <section id="glossarySection" style="display: none;">
+            <h2>📖 Glossaire Technique Complet</h2>
+            <div class="glossary" id="technicalGlossary">
+                <!-- Rempli dynamiquement -->
+            </div>
+        </section>
+
+        <!-- QUIZ INTERACTIF -->
+        <section class="encapsulation-diagram">
+            <h2>🧠 Quiz Technique</h2>
+            <div id="quizContainer">
+                <div class="term-card">
+                    <div id="quizQuestion">Chargement...</div>
+                    <div id="quizOptions"></div>
+                    <button class="btn" onclick="nextQuestion()" style="margin-top: 20px;">
+                        <span>➡️</span> Question Suivante
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>🎓 Formation Admin Infrastructure - Terminologie Réseau OSI</p>
+            <p>💡 PDU: Protocol Data Unit - L'unité de données à chaque couche</p>
+            <p>📚 "All People Seem To Need Data Processing" - Mnémotechnique OSI</p>
+        </footer>
+    </div>
+
+    <script>
+        // DONNÉES DE TERMINOLOGIE
+        const terminologyData = {
+            layer7: {
+                title: "Couche 7 - Application",
+                pdu: "DONNÉES",
+                icon: "📱",
+                terms: [
+                    {
+                        term: "Socket",
+                        definition: "Point de terminaison d'une communication bidirectionnelle entre deux programmes sur un réseau. Combinaison IP:Port.",
+                        example: "192.168.1.100:49152 ↔ 93.184.216.34:80",
+                        technical: "Interface de programmation permettant la communication réseau"
+                    },
+                    {
+                        term: "API (Application Programming Interface)",
+                        definition: "Ensemble de fonctions permettant aux applications d'utiliser les services réseau.",
+                        example: "Windows Sockets API, POSIX sockets",
+                        technical: "Interface logicielle entre application et services réseau"
+                    },
+                    {
+                        term: "Service",
+                        definition: "Fonctionnalité fournie par la couche application (web, mail, fichiers).",
+                        example: "HTTP (Web), SMTP (Email), FTP (Fichiers)",
+                        technical: "Application réseau répondant à des requêtes sur des ports spécifiques"
+                    },
+                    {
+                        term: "PDU - Données",
+                        definition: "Données de l'application proprement dites, sans en-têtes de couches inférieures.",
+                        example: "GET /index.html HTTP/1.1\r\nHost: example.com",
+                        technical: "Payload de la couche application, souvent formaté selon un protocole spécifique"
+                    }
+                ],
+                wireshark: `# Filtres Couche Application
+http                          # Tout HTTP
+http.request.method == "GET"  # Requêtes GET
+dns                           # Requêtes DNS
+ftp                           # Transferts FTP
+ssh                           # Sessions SSH
+telnet                        # Telnet`
+            },
+
+            layer6: {
+                title: "Couche 6 - Présentation",
+                pdu: "DONNÉES",
+                icon: "🔐",
+                terms: [
+                    {
+                        term: "Encodage",
+                        definition: "Conversion des données dans un format standardisé pour la transmission.",
+                        example: "ASCII, Unicode, Base64, JSON, XML",
+                        technical: "Représentation des caractères et structures de données"
+                    },
+                    {
+                        term: "Chiffrement/Déchiffrement",
+                        definition: "Transformation des données pour assurer la confidentialité.",
+                        example: "SSL/TLS, AES, RSA, DES",
+                        technical: "Algorithmes cryptographiques symétriques/asymétriques"
+                    },
+                    {
+                        term: "Compression/Décompression",
+                        definition: "Réduction de la taille des données pour optimiser la bande passante.",
+                        example: "gzip, deflate, LZ77, JPEG compression",
+                        technical: "Algorithmes de compression sans perte ou avec perte"
+                    },
+                    {
+                        term: "Sérialisation",
+                        definition: "Conversion d'objets en format binaire pour la transmission.",
+                        example: "Protocol Buffers, JSON, XML, ASN.1",
+                        technical: "Encodage des structures de données complexes"
+                    }
+                ],
+                wireshark: `# Filtres Couche Présentation
+ssl                            # Sessions SSL/TLS
+tls.handshake.type == 1        # Client Hello
+http.content_encoding          # Compression HTTP
+frame contains "gzip"          # Données compressées
+http.content_type contains "json"  # JSON data`
+            },
+
+            layer5: {
+                title: "Couche 5 - Session",
+                pdu: "DONNÉES",
+                icon: "🤝",
+                terms: [
+                    {
+                        term: "Session",
+                        definition: "Connexion logique établie entre deux systèmes pour échanger des données.",
+                        example: "Session HTTP, Session SSH, Session RDP",
+                        technical: "Association temporaire entre applications avec état"
+                    },
+                    {
+                        term: "RPC (Remote Procedure Call)",
+                        definition: "Exécution d'une procédure sur un système distant.",
+                        example: "Sun RPC, DCOM, .NET Remoting",
+                        technical: "Appel de procédure distante via stub/proxy"
+                    },
+                    {
+                        term: "Dialogue",
+                        definition: "Contrôle de qui parle quand dans une communication.",
+                        example: "Half-duplex, Full-duplex, Simplex",
+                        technical: "Gestion de la prise de parole dans la communication"
+                    },
+                    {
+                        term: "Synchronisation",
+                        definition: "Insertion de points de contrôle pour reprise sur erreur.",
+                        example: "Checkpoints dans les transferts longs",
+                        technical: "Points de reprise pour communications longues"
+                    }
+                ],
+                wireshark: `# Filtres Couche Session
+rpc                            # Appels de procédure distante
+netbios                        # Sessions NetBIOS
+smb2                           # SMB sessions
+pptp                           # Tunnels PPTP
+sip                            # Sessions VoIP`
+            },
+
+            layer4: {
+                title: "Couche 4 - Transport",
+                pdu: "SEGMENT (TCP) / DATAGRAMME (UDP)",
+                icon: "🚚",
+                terms: [
+                    {
+                        term: "Segment TCP",
+                        definition: "Unité de données de la couche transport avec TCP.",
+                        example: "En-tête TCP (20+ octets) + Données",
+                        technical: "PDU TCP avec numéros de séquence, ports, flags"
+                    },
+                    {
+                        term: "Datagramme UDP",
+                        definition: "Unité de données de la couche transport avec UDP.",
+                        example: "En-tête UDP (8 octets) + Données",
+                        technical: "PDU UDP sans garantie de livraison"
+                    },
+                    {
+                        term: "Port",
+                        definition: "Numéro 16-bit identifiant un service/application.",
+                        example: "80 (HTTP), 443 (HTTPS), 53 (DNS)",
+                        technical: "End point logique dans un système (0-65535)"
+                    },
+                    {
+                        term: "Socket (couche transport)",
+                        definition: "Combinaison unique IP:Port identifiant une connexion.",
+                        example: "192.168.1.100:49152",
+                        technical: "Adresse de transport pour multiplexage"
+                    },
+                    {
+                        term: "Three-way handshake",
+                        definition: "Établissement de connexion TCP en trois étapes.",
+                        example: "SYN → SYN-ACK → ACK",
+                        technical: "Négociation de paramètres de connexion TCP"
+                    }
+                ],
+                wireshark: `# Filtres Couche Transport
+tcp                            # Tout TCP
+tcp.port == 80                 # Port spécifique
+tcp.flags.syn == 1             # Paquets SYN
+tcp.analysis.retransmission    # Retransmissions
+udp                            # Tout UDP
+udp.port == 53                 # DNS over UDP`
+            },
+
+            layer3: {
+                title: "Couche 3 - Réseau",
+                pdu: "PAQUET",
+                icon: "🌐",
+                terms: [
+                    {
+                        term: "Paquet IP",
+                        definition: "Unité de données de la couche réseau avec adressage logique.",
+                        example: "En-tête IP (20+ octets) + Données transport",
+                        technical: "PDU de couche 3 avec adresses IP source/destination"
+                    },
+                    {
+                        term: "Routeur",
+                        definition: "Équipement qui route les paquets entre réseaux.",
+                        example: "Cisco, Juniper, MikroTik",
+                        technical: "Forwarding basé sur tables de routage"
+                    },
+                    {
+                        term: "Adresse IP",
+                        definition: "Adresse logique 32-bit (IPv4) ou 128-bit (IPv6).",
+                        example: "192.168.1.1, 2001:db8::1",
+                        technical: "Identifiant logique hiérarchique"
+                    },
+                    {
+                        term: "TTL (Time To Live)",
+                        definition: "Nombre maximum de sauts avant suppression du paquet.",
+                        example: "TTL: 64 (Windows), 255 (Linux)",
+                        technical: "Compteur décrémenté à chaque routeur, évite les boucles"
+                    },
+                    {
+                        term: "Fragmentation",
+                        definition: "Division d'un paquet en fragments plus petits.",
+                        example: "Paquets > MTU fragmentés",
+                        technical: "Segmentation au niveau IP pour adapter au MTU"
+                    }
+                ],
+                wireshark: `# Filtres Couche Réseau
+ip                             # Tout IP
+ip.src == 192.168.1.1          # Source spécifique
+ip.dst == 8.8.8.8              # Destination spécifique
+icmp                           # Messages ICMP (ping)
+arp                            # Résolution ARP
+ip.frag_offset > 0             # Fragments IP`
+            },
+
+            layer2: {
+                title: "Couche 2 - Liaison de données",
+                pdu: "TRAME",
+                icon: "🔗",
+                terms: [
+                    {
+                        term: "Trame",
+                        definition: "Unité de données de la couche liaison avec adressage physique.",
+                        example: "En-tête Ethernet (14 octets) + Données + FCS (4 octets)",
+                        technical: "PDU de couche 2 avec adresses MAC"
+                    },
+                    {
+                        term: "Adresse MAC",
+                        definition: "Adresse physique 48-bit unique à chaque interface réseau.",
+                        example: "00:1A:2B:3C:4D:5E",
+                        technical: "Identifiant matériel en hexadécimal"
+                    },
+                    {
+                        term: "Switch",
+                        definition: "Équipement qui commute les trames dans un LAN.",
+                        example: "Switch Ethernet, Switch managé",
+                        technical: "Forwarding basé sur table MAC address"
+                    },
+                    {
+                        term: "VLAN (Virtual LAN)",
+                        definition: "Réseau local virtuel isolant le trafic.",
+                        example: "VLAN 10 pour serveurs, VLAN 20 pour utilisateurs",
+                        technical: "Segmentation logique au niveau couche 2"
+                    },
+                    {
+                        term: "FCS (Frame Check Sequence)",
+                        definition: "Contrôle d'erreur CRC-32 pour détecter les corruptions.",
+                        example: "CRC calculé sur toute la trame",
+                        technical: "Code détecteur d'erreurs 32-bit"
+                    }
+                ],
+                wireshark: `# Filtres Couche Liaison
+eth                            # Trames Ethernet
+eth.src == 00:11:22:33:44:55   # MAC source
+eth.dst == ff:ff:ff:ff:ff:ff   # Broadcast
+vlan                           # Trames VLAN
+llc                            # En-têtes LLC
+stp                            # Spanning Tree Protocol`
+            },
+
+            layer1: {
+                title: "Couche 1 - Physique",
+                pdu: "BIT",
+                icon: "⚡",
+                terms: [
+                    {
+                        term: "Bit",
+                        definition: "Unité élémentaire d'information binaire (0 ou 1).",
+                        example: "Flux de bits: 110100101...",
+                        technical: "Binary digit - plus petite unité de données"
+                    },
+                    {
+                        term: "Signal",
+                        definition: "Représentation physique des bits sur le média.",
+                        example: "Tension électrique, lumière laser, onde radio",
+                        technical: "Représentation analogique ou numérique"
+                    },
+                    {
+                        term: "Hub",
+                        definition: "Équipement qui répète les signaux sur tous les ports.",
+                        example: "Hub Ethernet 10/100",
+                        technical: "Répéteur multiport - couche physique uniquement"
+                    },
+                    {
+                        term: "Câble",
+                        definition: "Support physique de transmission.",
+                        example: "UTP Cat6, Fibre optique, Coaxial",
+                        technical: "Média de transmission guidé"
+                    },
+                    {
+                        term: "Codage ligne",
+                        definition: "Méthode de représentation des bits en signaux.",
+                        example: "Manchester, NRZ, 4B/5B",
+                        technical: "Schéma de codage pour synchronisation et intégrité"
+                    }
+                ],
+                wireshark: `# Couche Physique - visible via:
+frame.len > 1514               # Trames jumbo
+frame.checkusm_bad == 1        # Erreurs CRC
+# Note: Wireshark capture après la couche physique
+# Les bits/signaux ne sont pas directement visibles`
+            }
+        };
+
+        // GLOSSAIRE TECHNIQUE COMPLET
+        const technicalGlossary = [
+            { term: "PDU", definition: "Protocol Data Unit - Unité de données à une couche spécifique" },
+            { term: "SDU", definition: "Service Data Unit - Données reçues de la couche supérieure" },
+            { term: "PCI", definition: "Protocol Control Information - En-têtes et trailers" },
+            { term: "MTU", definition: "Maximum Transmission Unit - Taille max d'une trame" },
+            { term: "MSS", definition: "Maximum Segment Size - Taille max d'un segment TCP" },
+            { term: "RTT", definition: "Round Trip Time - Temps aller-retour" },
+            { term: "RTO", definition: "Retransmission Timeout - Délai avant retransmission" },
+            { term: "ACK", definition: "Acknowledgment - Accusé de réception" },
+            { term: "SYN", definition: "Synchronize - Synchronisation de connexion" },
+            { term: "FIN", definition: "Finish - Fermeture de connexion" },
+            { term: "RST", definition: "Reset - Réinitialisation de connexion" },
+            { term: "NAT", definition: "Network Address Translation - Traduction d'adresses" },
+            { term: "PAT", definition: "Port Address Translation - NAT avec ports" },
+            { term: "DHCP", definition: "Dynamic Host Configuration Protocol" },
+            { term: "DNS", definition: "Domain Name System - Résolution noms" },
+            { term: "ARP", definition: "Address Resolution Protocol - IP → MAC" },
+            { term: "ICMP", definition: "Internet Control Message Protocol - Messages contrôle" },
+            { term: "QoS", definition: "Quality of Service - Qualité de service" },
+            { term: "VoIP", definition: "Voice over IP - Téléphonie sur IP" },
+            { term: "VPN", definition: "Virtual Private Network - Réseau privé virtuel" },
+            { term: "LAN", definition: "Local Area Network - Réseau local" },
+            { term: "WAN", definition: "Wide Area Network - Réseau étendu" },
+            { term: "MAN", definition: "Metropolitan Area Network - Réseau métropolitain" },
+            { term: "SAN", definition: "Storage Area Network - Réseau de stockage" },
+            { term: "ISP", definition: "Internet Service Provider - Fournisseur d'accès" }
+        ];
+
+        // QUIZ TECHNIQUE
+        const quizQuestions = [
+            {
+                question: "Quelle est l'unité de données (PDU) de la couche 2 (Liaison)?",
+                options: ["Paquet", "Segment", "Trame", "Bit"],
+                answer: 2,
+                explanation: "La couche 2 utilise la TRAME comme PDU, qui contient les adresses MAC."
+            },
+            {
+                question: "Qu'est-ce qu'un Socket en réseau?",
+                options: [
+                    "Un type de câble réseau",
+                    "Combinaison IP:Port unique",
+                    "Un protocole de transport",
+                    "Une adresse MAC"
+                ],
+                answer: 1,
+                explanation: "Un Socket est la combinaison unique d'une adresse IP et d'un numéro de port."
+            },
+            {
+                question: "Quelle couche gère le Three-Way Handshake?",
+                options: ["Application (7)", "Transport (4)", "Réseau (3)", "Session (5)"],
+                answer: 1,
+                explanation: "Le Three-Way Handshake (SYN, SYN-ACK, ACK) est géré par TCP à la couche Transport (4)."
+            },
+            {
+                question: "Quelle est la différence entre Segment et Datagramme?",
+                options: [
+                    "Segment = TCP, Datagramme = UDP",
+                    "Segment = IP, Datagramme = Ethernet",
+                    "Segment = Application, Datagramme = Transport",
+                    "C'est la même chose"
+                ],
+                answer: 0,
+                explanation: "Segment est le PDU de TCP (orienté connexion), Datagramme est le PDU de UDP (sans connexion)."
+            },
+            {
+                question: "Quel équipement fonctionne à la couche 2?",
+                options: ["Routeur", "Switch", "Hub", "Firewall"],
+                answer: 1,
+                explanation: "Le Switch fonctionne à la couche 2 (Liaison) et commute basé sur les adresses MAC."
+            }
+        ];
+
+        // VARIABLES D'ÉTAT
+        let currentQuizQuestion = 0;
+        let quizScore = 0;
+
+        // FONCTIONS PRINCIPALES
+        function showLayerDetails(layerNumber) {
+            const layerData = terminologyData[`layer${layerNumber}`];
+            const contentDiv = document.getElementById('terminologyContent');
+            
+            let html = `
+                <section style="margin: 40px 0;">
+                    <h2>${layerData.icon} ${layerData.title}</h2>
+                    <div class="term-card layer-${layerNumber}-term">
+                        <div class="term-header">
+                            <div class="term-icon">${layerData.icon}</div>
+                            <div>
+                                <div class="term-title">PDU: ${layerData.pdu}</div>
+                                <small>Protocol Data Unit - Unité de données de cette couche</small>
+                            </div>
+                        </div>
+                        
+                        <div class="terminology-grid">
+            `;
+            
+            // Ajouter chaque terme
+            layerData.terms.forEach(term => {
+                html += `
+                    <div class="term-card" style="border-color: inherit;">
+                        <h3>${term.term}</h3>
+                        <p><strong>Définition:</strong> ${term.definition}</p>
+                        <p><strong>Exemple:</strong> ${term.example}</p>
+                        <p><strong>Technique:</strong> ${term.technical}</p>
+                    </div>
+                `;
+            });
+            
+            html += `
+                        </div>
+                        
+                        <h3 style="margin-top: 30px;">🎯 Filtres Wireshark Correspondants</h3>
+                        <div class="code-block">
+                            ${layerData.wireshark}
+                        </div>
+                    </div>
+                </section>
+            `;
+            
+            contentDiv.innerHTML = html;
+            
+            // Scroll vers le contenu
+            contentDiv.scrollIntoView({ behavior: 'smooth' });
+            
+            // Animation de mise en évidence
+            const layerElement = document.querySelector(`.layer-${layerNumber}`);
+            layerElement.classList.add('highlight');
+            setTimeout(() => layerElement.classList.remove('highlight'), 2000);
+        }
+
+        function showAllTerms() {
+            const contentDiv = document.getElementById('terminologyContent');
+            let html = '<h2>📚 Tous les Termes Techniques par Couche</h2>';
+            
+            // Afficher toutes les couches
+            for (let i = 7; i >= 1; i--) {
+                const layerData = terminologyData[`layer${i}`];
+                html += `
+                    <div class="term-card layer-${i}-term" style="margin: 20px 0;">
+                        <div class="term-header">
+                            <div class="term-icon">${layerData.icon}</div>
+                            <div class="term-title">${layerData.title} - PDU: ${layerData.pdu}</div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 20px;">
+                `;
+                
+                layerData.terms.forEach(term => {
+                    html += `
+                        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                            <strong>${term.term}</strong><br>
+                            <small>${term.definition}</small>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            contentDiv.innerHTML = html;
+            contentDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showTermDetails(termType) {
+            let details = '';
+            
+            switch(termType) {
+                case 'donnees':
+                    details = `
+                        <h3>📄 DONNÉES (Couches 7-6-5)</h3>
+                        <p><strong>Définition:</strong> Informations de l'application proprement dites.</p>
+                        <p><strong>Contenu:</strong> Requête/réponse HTTP, données FTP, email SMTP, etc.</p>
+                        <p><strong>Taille:</strong> Variable selon l'application</p>
+                        <p><strong>Exemple Wireshark:</strong>
+                        <div class="code-block">
+GET /index.html HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0
+Accept: text/html
+                        </div>
+                    `;
+                    break;
+                    
+                case 'segment':
+                    details = `
+                        <h3>📦 SEGMENT TCP (Couche 4)</h3>
+                        <p><strong>Définition:</strong> Données + en-tête TCP</p>
+                        <p><strong>En-tête TCP (20+ octets):</strong></p>
+                        <ul>
+                            <li>Port Source (16 bits)</li>
+                            <li>Port Destination (16 bits)</li>
+                            <li>Numéro de Séquence (32 bits)</li>
+                            <li>Numéro d'Accusé (32 bits)</li>
+                            <li>Flags (SYN, ACK, FIN, RST, PSH, URG)</li>
+                            <li>Fenêtre (16 bits)</li>
+                            <li>Checksum (16 bits)</li>
+                        </ul>
+                        <div class="code-block">
+# Structure TCP dans Wireshark
+Transmission Control Protocol
+    Source Port: 49152
+    Destination Port: 80
+    Sequence Number: 1000
+    Acknowledgment Number: 0
+    Header Length: 20 bytes
+    Flags: 0x002 (SYN)
+                        </div>
+                    `;
+                    break;
+                    
+                case 'paquet':
+                    details = `
+                        <h3>📫 PAQUET IP (Couche 3)</h3>
+                        <p><strong>Définition:</strong> Segment + en-tête IP</p>
+                        <p><strong>En-tête IP (20+ octets):</strong></p>
+                        <ul>
+                            <li>Version (4 bits) - IPv4 ou IPv6</li>
+                            <li>IHL (4 bits) - Longueur en-tête</li>
+                            <li>TOS (8 bits) - Type de service</li>
+                            <li>Longueur Totale (16 bits)</li>
+                            <li>Identification (16 bits)</li>
+                            <li>Flags (3 bits) - Fragmentation</li>
+                            <li>Fragment Offset (13 bits)</li>
+                            <li>TTL (8 bits) - Time To Live</li>
+                            <li>Protocole (8 bits) - TCP=6, UDP=17</li>
+                            <li>Checksum (16 bits)</li>
+                            <li>IP Source (32 bits)</li>
+                            <li>IP Destination (32 bits)</li>
+                        </ul>
+                    `;
+                    break;
+                    
+                case 'trame':
+                    details = `
+                        <h3>🔗 TRAME Ethernet (Couche 2)</h3>
+                        <p><strong>Définition:</strong> Paquet + en-tête/trailer Ethernet</p>
+                        <p><strong>Structure complète:</strong></p>
+                        <ol>
+                            <li><strong>Préambule (7 octets):</strong> 10101010...</li>
+                            <li><strong>SFD (1 octet):</strong> 10101011</li>
+                            <li><strong>Destination MAC (6 octets)</strong></li>
+                            <li><strong>Source MAC (6 octets)</strong></li>
+                            <li><strong>Type (2 octets):</strong> 0x0800=IPv4, 0x86DD=IPv6</li>
+                            <li><strong>Données (46-1500 octets):</strong> Paquet IP</li>
+                            <li><strong>FCS (4 octets):</strong> CRC-32 pour détection erreurs</li>
+                        </ol>
+                        <div class="code-block">
+# Trame Ethernet dans Wireshark
+Ethernet II
+    Destination: 00:aa:bb:cc:dd:ee
+    Source: 00:11:22:33:44:55
+    Type: IPv4 (0x0800)
+                        </div>
+                    `;
+                    break;
+                    
+                case 'bit':
+                    details = `
+                        <h3>⚡ BITS (Couche 1)</h3>
+                        <p><strong>Définition:</strong> Représentation physique des données</p>
+                        <p><strong>Exemples de transmission:</strong></p>
+                        <ul>
+                            <li><strong>Cuivre (Ethernet):</strong> Signaux électriques</li>
+                            <li><strong>Fibre optique:</strong> Impulsions lumineuses</li>
+                            <li><strong>Wi-Fi:</strong> Ondes radio</li>
+                        </ul>
+                        <p><strong>Codages courants:</strong></p>
+                        <ul>
+                            <li><strong>Manchester:</strong> Transition au milieu du bit</li>
+                            <li><strong>NRZ (Non-Return to Zero):</strong> 1=haute tension, 0=basse tension</li>
+                            <li><strong>4B/5B:</strong> 4 bits → 5 bits pour synchronisation</li>
+                        </ul>
+                        <p><strong>Note:</strong> Wireshark capture après la couche physique, les bits ne sont pas directement visibles.</p>
+                    `;
+                    break;
+            }
+            
+            // Afficher dans un modal ou une section
+            const contentDiv = document.getElementById('terminologyContent');
+            contentDiv.innerHTML = `
+                <section class="term-card">
+                    ${details}
+                    <button class="btn" onclick="showAllTerms()" style="margin-top: 20px;">
+                        <span>📚</span> Retour aux termes
+                    </button>
+                </section>
+            `;
+            
+            contentDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function animateEncapsulation() {
+            const layers = document.querySelectorAll('.packet-layer');
+            
+            // Réinitialiser
+            layers.forEach(layer => {
+                layer.style.transform = 'scale(1)';
+                layer.style.opacity = '1';
+            });
+            
+            // Animation séquentielle
+            layers.forEach((layer, index) => {
+                setTimeout(() => {
+                    layer.style.transform = 'scale(1.05)';
+                    layer.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+                    layer.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+                    
+                    // Afficher le sens de l'encapsulation
+                    const arrow = document.createElement('div');
+                    arrow.innerHTML = '↓ Encapsulation';
+                    arrow.style.color = '#3b82f6';
+                    arrow.style.fontWeight = 'bold';
+                    arrow.style.marginTop = '10px';
+                    layer.appendChild(arrow);
+                    
+                    setTimeout(() => {
+                        layer.removeChild(arrow);
+                        layer.style.transform = 'scale(1)';
+                        layer.style.backgroundColor = '';
+                    }, 1000);
+                }, index * 800);
+            });
+        }
+
+        function animateDecapsulation() {
+            const layers = document.querySelectorAll('.packet-layer');
+            
+            // Animation inverse
+            for (let i = layers.length - 1; i >= 0; i--) {
+                setTimeout(() => {
+                    const layer = layers[i];
+                    layer.style.transform = 'scale(1.05)';
+                    layer.style.boxShadow = '0 10px 30px rgba(16, 185, 129, 0.3)';
+                    layer.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+                    
+                    // Afficher le sens de la décapsulation
+                    const arrow = document.createElement('div');
+                    arrow.innerHTML = '↑ Décapsulation';
+                    arrow.style.color = '#10b981';
+                    arrow.style.fontWeight = 'bold';
+                    arrow.style.marginTop = '10px';
+                    layer.appendChild(arrow);
+                    
+                    setTimeout(() => {
+                        layer.removeChild(arrow);
+                        layer.style.transform = 'scale(1)';
+                        layer.style.backgroundColor = '';
+                    }, 1000);
+                }, (layers.length - 1 - i) * 800);
+            }
+        }
+
+        function showGlossary() {
+            const glossarySection = document.getElementById('glossarySection');
+            const glossaryDiv = document.getElementById('technicalGlossary');
+            
+            // Remplir le glossaire
+            let html = '';
+            technicalGlossary.forEach(item => {
+                html += `
+                    <div class="glossary-term">
+                        <abbr title="${item.definition}">${item.term}</abbr><br>
+                        <small>${item.definition}</small>
+                    </div>
+                `;
+            });
+            
+            glossaryDiv.innerHTML = html;
+            glossarySection.style.display = 'block';
+            glossarySection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // FONCTIONS QUIZ
+        function loadQuizQuestion() {
+            const question = quizQuestions[currentQuizQuestion];
+            const container = document.getElementById('quizContainer');
+            
+            let optionsHtml = '';
+            question.options.forEach((option, index) => {
+                optionsHtml += `
+                    <div class="term-item" onclick="checkAnswer(${index})" 
+                         style="cursor: pointer; border-color: var(--layer${Math.floor(Math.random() * 7) + 1});">
+                        ${option}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = `
+                <div class="term-card">
+                    <h3>Question ${currentQuizQuestion + 1}/${quizQuestions.length}</h3>
+                    <div id="quizQuestion" style="margin: 20px 0; font-size: 1.2rem;">
+                        ${question.question}
+                    </div>
+                    <div id="quizOptions">
+                        ${optionsHtml}
+                    </div>
+                    <div id="quizFeedback" style="margin-top: 20px;"></div>
+                    <button class="btn" onclick="nextQuestion()" style="margin-top: 20px;">
+                        <span>➡️</span> ${currentQuizQuestion < quizQuestions.length - 1 ? 'Question Suivante' : 'Voir Score'}
+                    </button>
+                </div>
+            `;
+        }
+
+        function checkAnswer(selectedIndex) {
+            const question = quizQuestions[currentQuizQuestion];
+            const feedbackDiv = document.getElementById('quizFeedback');
+            
+            if (selectedIndex === question.answer) {
+                quizScore++;
+                feedbackDiv.innerHTML = `
+                    <div style="color: #10b981; font-weight: bold;">
+                        ✅ Correct! ${question.explanation}
+                    </div>
+                `;
+            } else {
+                feedbackDiv.innerHTML = `
+                    <div style="color: #ef4444; font-weight: bold;">
+                        ❌ Incorrect. La bonne réponse était: ${question.options[question.answer]}<br>
+                        ${question.explanation}
+                    </div>
+                `;
+            }
+            
+            // Désactiver les options après réponse
+            document.querySelectorAll('#quizOptions .term-item').forEach(item => {
+                item.style.cursor = 'default';
+                item.style.opacity = '0.7';
+            });
+        }
+
+        function nextQuestion() {
+            currentQuizQuestion++;
+            
+            if (currentQuizQuestion < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                // Afficher le score final
+                const container = document.getElementById('quizContainer');
+                container.innerHTML = `
+                    <div class="term-card">
+                        <h2>🎉 Quiz Terminé !</h2>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <div style="font-size: 3rem; color: ${quizScore >= 3 ? '#10b981' : '#ef4444'}">
+                                ${quizScore}/${quizQuestions.length}
+                            </div>
+                            <p>Score: ${Math.round((quizScore/quizQuestions.length)*100)}%</p>
+                            <p>${quizScore >= 3 ? 'Excellent !' : 'À revoir...'}</p>
+                        </div>
+                        <button class="btn" onclick="resetQuiz()">
+                            <span>🔄</span> Recommencer le Quiz
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function resetQuiz() {
+            currentQuizQuestion = 0;
+            quizScore = 0;
+            loadQuizQuestion();
+        }
+
+        // DÉMO ENCAPSULATION
+        function startEncapsulationDemo() {
+            const contentDiv = document.getElementById('terminologyContent');
+            
+            contentDiv.innerHTML = `
+                <section class="encapsulation-diagram">
+                    <h2>🎬 Démonstration Interactive d'Encapsulation</h2>
+                    <p>Suivez étape par étape la transformation des données</p>
+                    
+                    <div id="demoSteps" style="text-align: left; max-width: 800px; margin: 30px auto;">
+                        <!-- Étapes générées dynamiquement -->
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="btn" onclick="nextDemoStep()" id="demoNextBtn">
+                            <span>▶️</span> Étape Suivante
+                        </button>
+                        <button class="btn" onclick="resetDemo()">
+                            <span>🔄</span> Réinitialiser
+                        </button>
+                    </div>
+                </section>
+            `;
+            
+            startDemo();
+        }
+
+        let demoStep = 0;
+        const demoSteps = [
+            "🎯 <strong>Étape 1: Données Application</strong><br>L'utilisateur tape 'example.com' → Données HTTP",
+            "📦 <strong>Étape 2: Encapsulation TCP</strong><br>Ajout en-tête TCP → Ports 49152→80 → SEGMENT",
+            "📫 <strong>Étape 3: Encapsulation IP</strong><br>Ajout en-tête IP → 192.168.1.100→93.184.216.34 → PAQUET",
+            "🔗 <strong>Étape 4: Encapsulation Ethernet</strong><br>Ajout en-tête Ethernet → MAC source/destination → TRAME",
+            "⚡ <strong>Étape 5: Transmission Physique</strong><br>Conversion en bits → Signaux électriques sur câble",
+            "🌐 <strong>Étape 6: Traversée Réseau</strong><br>Switch → Routeur → Internet → Routeur → Serveur",
+            "🔄 <strong>Étape 7: Décapsulation</strong><br>Processus inverse chez le serveur",
+            "✅ <strong>Étape 8: Réponse</strong><br>Même processus pour la réponse serveur→client"
+        ];
+
+        function startDemo() {
+            demoStep = 0;
+            updateDemoDisplay();
+        }
+
+        function nextDemoStep() {
+            demoStep++;
+            if (demoStep >= demoSteps.length) {
+                demoStep = demoSteps.length - 1;
+            }
+            updateDemoDisplay();
+        }
+
+        function updateDemoStep(step) {
+            demoStep = step;
+            updateDemoDisplay();
+        }
+
+        function updateDemoDisplay() {
+            const demoDiv = document.getElementById('demoSteps');
+            if (!demoDiv) return;
+            
+            let html = '';
+            demoSteps.forEach((step, index) => {
+                const isActive = index === demoStep;
+                const isCompleted = index < demoStep;
+                
+                html += `
+                    <div style="
+                        padding: 15px;
+                        margin: 10px 0;
+                        border-radius: 8px;
+                        background: ${isActive ? 'rgba(59, 130, 246, 0.2)' : 
+                                    isCompleted ? 'rgba(16, 185, 129, 0.1)' : 
+                                    'rgba(30, 41, 59, 0.5)'};
+                        border-left: 4px solid ${isActive ? '#3b82f6' : 
+                                            isCompleted ? '#10b981' : 
+                                            '#4b5563'};
+                        cursor: pointer;
+                        transition: all 0.3s;
+                    " onclick="updateDemoStep(${index})">
+                        ${step}
+                        ${isCompleted ? ' ✅' : ''}
+                    </div>
+                `;
+            });
+            
+            demoDiv.innerHTML = html;
+            
+            // Mettre à jour le bouton
+            const nextBtn = document.getElementById('demoNextBtn');
+            if (nextBtn) {
+                nextBtn.innerHTML = demoStep < demoSteps.length - 1 ? 
+                    '<span>▶️</span> Étape Suivante' : 
+                    '<span>🏁</span> Terminé';
+            }
+        }
+
+        function resetDemo() {
+            demoStep = 0;
+            updateDemoDisplay();
+        }
+
+        // INITIALISATION
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger la première couche par défaut
+            showLayerDetails(7);
+            
+            // Charger le quiz
+            loadQuizQuestion();
+            
+            // Démarrer la démo
+            startDemo();
+        });
+    </script>
+</body>
+</html>
